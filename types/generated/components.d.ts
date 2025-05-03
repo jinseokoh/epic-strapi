@@ -73,7 +73,7 @@ export interface LayoutHeroSection extends Struct.ComponentSchema {
   };
   attributes: {
     heading: Schema.Attribute.String;
-    image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    image: Schema.Attribute.Media<'images'>;
     link: Schema.Attribute.Component<'components.link', false>;
     subHeading: Schema.Attribute.Text;
   };
