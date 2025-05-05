@@ -24,21 +24,30 @@ export default {
           oauth: 2,
         },
         async authCallback({ accessToken, providers, purest }) {
-          // Kakao 사용자 정보 가져오기
+          console.log('Received Access Token:', accessToken) // 디버깅 로그
           const kakao = purest({ provider: 'kakao' })
-          const userResponse = await kakao
-            .get('https://kapi.kakao.com/v2/user/me')
-            .auth(accessToken)
-            .request()
-
-          const { kakao_account } = userResponse.body
-
-          return {
-            username: kakao_account.profile.nickname || 'kakao_user', // 사용자 닉네임
-            email:
-              kakao_account.email || `kakao_${kakao_account.id}@example.com`, // 이메일 (없을 경우 대체)
-            provider: 'kakao',
-            providerId: kakao_account.id, // Kakao 사용자 ID
+          try {
+            const userResponse = await kakao
+              .get('https://kapi.kakao.com/v2/user/me')
+              .auth(accessToken)
+              .request()
+            console.log('Kakao User Response:', userResponse.body) // 디버깅 로그
+            const { kakao_account } = userResponse.body
+            console.log('Returning User Data:', {
+              username: kakao_account.profile.nickname || 'kakao_user',
+              email: kakao_account.email || `kakao_${kakao_account.id}@example.com`,
+              provider: 'kakao',
+              providerId: kakao_account.id,
+            })
+            return {
+              username: kakao_account.profile.nickname || 'kakao_user',
+              email: kakao_account.email || `kakao_${kakao_account.id}@example.com`,
+              provider: 'kakao',
+              providerId: kakao_account.id,
+            }
+          } catch (error) {
+            console.error('Error in authCallback:', error) // 에러 로그
+            throw new Error('Failed to fetch Kakao user info')
           }
         },
       })
